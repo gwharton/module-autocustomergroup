@@ -1,0 +1,18 @@
+{
+    "name": "gwharton/module-autocustomergroup",
+    "type": "magento2-module",
+    "require": {
+        "magento/framework": "*"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Gw\\AutoCustomerGroup\\": ""
+        }
+    }
+}
