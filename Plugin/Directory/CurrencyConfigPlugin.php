@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Plugin\Directory;
 
 use Gw\AutoCustomerGroup\Model\AutoCustomerGroup;

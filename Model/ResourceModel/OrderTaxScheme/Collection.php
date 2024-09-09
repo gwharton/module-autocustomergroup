@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Model\ResourceModel\OrderTaxScheme;
 
 use Gw\AutoCustomerGroup\Model\ResourceModel\OrderTaxScheme as OrderTaxSchemeResource;

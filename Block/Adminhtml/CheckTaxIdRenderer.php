@@ -5,12 +5,9 @@ namespace Gw\AutoCustomerGroup\Block\Adminhtml;
 use Gw\AutoCustomerGroup\Model\AutoCustomerGroup;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Button;
-use Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat;
-use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\Json\EncoderInterface;
 
 class CheckTaxIdRenderer extends Vat

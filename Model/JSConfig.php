@@ -1,8 +1,7 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Model;
 
-use Gw\AutoCustomerGroup\Model\AutoCustomerGroup;
-use Gw\AutoCustomerGroup\Model\TaxSchemes;
 use Magento\Store\Model\StoreManagerInterface;
 
 class JSConfig

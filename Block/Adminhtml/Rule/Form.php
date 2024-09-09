@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Block\Adminhtml\Rule;
 
 use Gw\AutoCustomerGroup\Model\TaxSchemes;

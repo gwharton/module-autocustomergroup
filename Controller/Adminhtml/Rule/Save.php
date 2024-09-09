@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Controller\Adminhtml\Rule;
 
 use Magento\Backend\App\Action\Context;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Ui\Component\Listing\Column;
 
 use Gw\AutoCustomerGroup\Api\Data\OrderTaxCollectedInterface;

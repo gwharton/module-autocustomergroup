@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Controller\CheckTaxId;
 
 use Gw\AutoCustomerGroup\Model\AutoCustomerGroup;

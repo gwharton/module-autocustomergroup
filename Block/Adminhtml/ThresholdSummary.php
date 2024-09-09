@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Block\Adminhtml;
 
 use Gw\AutoCustomerGroup\Api\Data\TaxSchemeInterface;

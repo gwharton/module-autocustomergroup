@@ -3,7 +3,16 @@
     "license": "OSL-3.0",
     "type": "magento2-module",
     "require": {
-        "magento/framework": "*"
+        "magento/framework": "*",
+        "magento/module-catalog": "*",
+        "magento/module-checkout": "*",
+        "magento/module-customer": "*",
+        "magento/module-directory": "*",
+        "magento/module-quote": "*",
+        "magento/module-sales": "*",
+        "magento/module-store": "*",
+        "magento/module-tax": "*",
+        "psr/log": "*"
     },
     "config": {
         "sort-packages": true

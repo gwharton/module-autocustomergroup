@@ -1,7 +1,7 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Api\Data;
 
-use Magento\Directory\Model\Currency;
 use Magento\Quote\Model\Quote;
 
 interface TaxSchemeInterface

@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Model\Collector;
 
 use Magento\Customer\Api\Data\CustomerInterface;

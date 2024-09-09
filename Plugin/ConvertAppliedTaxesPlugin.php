@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Plugin;
 
 use Magento\Framework\Exception\NoSuchEntityException;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Plugin\Tax;
 
 use Gw\AutoCustomerGroup\Model\TaxSchemes;

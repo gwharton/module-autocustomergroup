@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Api\Data;
 
 interface OrderTaxCollectedInterface

@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Model\Calculation;
 
 use Magento\Framework\DataObject;

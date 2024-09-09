@@ -1,4 +1,5 @@
 <?php
+
 namespace Gw\AutoCustomerGroup\Model\Config\Source;
 
 use Magento\Customer\Api\GroupManagementInterface;
