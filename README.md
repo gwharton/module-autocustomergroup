@@ -16,6 +16,18 @@
 <li>Sales Order Grid column to show Tax Scheme Details for order.</li>
 </ul>
 
+<h2>Country Specific Modules</h2>
+<p>For this module to do anything, you need to install one or more country specific modules. Install all of the modules
+applicable for the countries that you sell into (not from). Let me know if you've written a module for AutoCustomerGroup so I can list it here.</p>
+<p>Modules available :</p>
+<ul>
+<li>composer require gwharton/module-autocustomergroup-australia</li>
+<li>composer require gwharton/module-autocustomergroup-eu</li>
+<li>composer require gwharton/module-autocustomergroup-newzealand</li>
+<li>composer require gwharton/module-autocustomergroup-norway</li>
+<li>composer require gwharton/module-autocustomergroup-uk</li>
+</ul>
+
 <h2>Overview</h2>
 <p>Changes introduced around the world to various countries tax schemes to better support online shopping, are not well support by the Magento Tax system. These changes are required URGENTLY, and while Magento consider the changes required and work towards a permanent solution, this module can be used as an interim measure.</p>
 <p>The module should be considered BETA. I encourage users to analyse the code, suggest improvements, generate PR's where applicable.</p>
