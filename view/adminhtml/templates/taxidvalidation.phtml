@@ -1,0 +1,10 @@
+<?php
+$script = <<<script
+require([
+    "prototype",
+    "Gw_AutoCustomerGroup/js/taxidvalidation"
+], function(){
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', ['type' => 'text/javascript'], $script, false); ?>

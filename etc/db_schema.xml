@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="tax_calculation_rule">
+        <column xsi:type="varchar" name="tax_scheme_id" nullable="true" length="255" comment="Tax Scheme ID"/>
+    </table>
+    <table name="sales_order_tax_scheme" resource="sales" engine="innodb" comment="Sales Order Tax Scheme Table">
+        <column xsi:type="int" name="order_tax_scheme_id" unsigned="true" nullable="false" identity="true"
+                comment="Order Tax Scheme ID"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false"
+                comment="Order ID"/>
+
+        <column xsi:type="varchar" name="reference" nullable="true" length="255" comment="Reference"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+
+        <column xsi:type="varchar" name="store_currency" nullable="true" length="255" comment="Store Currency"/>
+        <column xsi:type="varchar" name="base_currency" nullable="true" length="255" comment="Base Currency"/>
+        <column xsi:type="varchar" name="scheme_currency" nullable="true" length="255" comment="Scheme Currency"/>
+
+        <column xsi:type="decimal" name="exchange_rate_base_to_store" scale="4" precision="12" unsigned="false" nullable="false"
+                default="1" comment="Exchange Rate (Base to Store)"/>
+        <column xsi:type="decimal" name="exchange_rate_scheme_to_base" scale="4" precision="12" unsigned="false" nullable="false"
+                default="1" comment="Exchange Rate (Scheme to Base)"/>
+
+        <column xsi:type="decimal" name="import_threshold_store" scale="4" precision="12" unsigned="false" nullable="false"
+                default="0" comment="Import Threshold in Store Currency"/>
+        <column xsi:type="decimal" name="import_threshold_base" scale="4" precision="12" unsigned="false" nullable="false"
+                default="0" comment="Import Threshold in Base Currency"/>
+        <column xsi:type="decimal" name="import_threshold_scheme" scale="4" precision="12" unsigned="false" nullable="false"
+                default="0" comment="Import Threshold in Scheme Currency"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="order_tax_scheme_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="SALES_ORDER_TAX_SCHEME_ORDER_ID_SALES_ORDER_ORDER_ID"
+                    table="sales_order_tax_scheme" column="order_id" referenceTable="sales_order"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+</schema>

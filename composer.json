@@ -1,5 +1,6 @@
 {
     "name": "gwharton/module-autocustomergroup",
+    "license": "OSL-3.0",
     "type": "magento2-module",
     "require": {
         "magento/framework": "*"

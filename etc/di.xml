@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Gw\AutoCustomerGroup\Ui\Component\Listing\Column\OrderTaxCollected">
+        <arguments>
+            <argument name="taxCollectors" xsi:type="array">
+                <item name="autocustomergroup" xsi:type="object">Gw\AutoCustomerGroup\Model\OrderTaxCollected</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Gw\AutoCustomerGroup\Model\Collector\AutoCustomerGroup">
+        <arguments>
+            <argument name="additionalCollectors" xsi:type="array">
+                <item name="redo_tax_subtotal" xsi:type="object">Magento\Tax\Model\Sales\Total\Quote\Subtotal</item>
+                <item name="redo_tax_shipping" xsi:type="object">Magento\Tax\Model\Sales\Total\Quote\Shipping</item>
+                <item name="redo_tax" xsi:type="object">Magento\Tax\Model\Sales\Total\Quote\Tax</item>
+                <item name="redo_tax_weee_tax" xsi:type="object">Magento\Weee\Model\Total\Quote\WeeeTax</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Directory\Model\CurrencyConfig">
+        <plugin name="AutoCustomerGroup_add_additional_base_currencies"
+                type="Gw\AutoCustomerGroup\Plugin\Directory\CurrencyConfigPlugin" />
+    </type>
+    <type name="Magento\Quote\Observer\Frontend\Quote\Address\CollectTotalsObserver">
+        <plugin name="AutoCustomerGroup_disable_quote_observer_collecttotals"
+                type="Gw\AutoCustomerGroup\Plugin\Quote\DisableCollectTotalsObserverPlugin" />
+    </type>
+    <type name="Magento\Customer\Observer\AfterAddressSaveObserver">
+        <plugin name="AutoCustomerGroup_disable_customer_observer_afteraddresssave"
+                type="Gw\AutoCustomerGroup\Plugin\Customer\DisableAfterAddressSaveObserverPlugin" />
+    </type>
+    <type name="Magento\Customer\Observer\BeforeAddressSaveObserver">
+        <plugin name="AutoCustomerGroup_customer_observer_beforeaddresssave"
+                type="Gw\AutoCustomerGroup\Plugin\Customer\BeforeAddressSaveObserverPlugin" />
+    </type>
+    <type name="Magento\Tax\Model\TaxRuleRepository">
+        <plugin name="AutoCustomerGroup_taxRuleRepositoryPlugin"
+                type="Gw\AutoCustomerGroup\Plugin\Tax\TaxRuleRepositoryPlugin" />
+    </type>
+    <type name="Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector">
+        <plugin name="AutoCustomerGroup_CopyTaxDetailsPlugin"
+                type="Gw\AutoCustomerGroup\Plugin\ConvertAppliedTaxesPlugin"/>
+    </type>
+
+    <preference for="Magento\Tax\Model\TaxRuleCollection"
+                type="Gw\AutoCustomerGroup\Model\TaxRuleCollection"/>
+    <preference for="Magento\Tax\Model\Calculation\UnitBaseCalculator"
+                type="Gw\AutoCustomerGroup\Model\Calculation\UnitBaseCalculator"/>
+    <preference for="Magento\Tax\Model\Calculation\TotalBaseCalculator"
+                type="Gw\AutoCustomerGroup\Model\Calculation\TotalBaseCalculator"/>
+    <preference for="Magento\Tax\Model\Calculation\RowBaseCalculator"
+                type="Gw\AutoCustomerGroup\Model\Calculation\RowBaseCalculator"/>
+    <preference for="Gw\AutoCustomerGroup\Api\Data\OrderTaxSchemeInterface"
+                type="Gw\AutoCustomerGroup\Model\OrderTaxScheme" />
+    <preference for="Gw\AutoCustomerGroup\Api\Data\TaxIdCheckResponseInterface"
+                type="Gw\AutoCustomerGroup\Model\TaxIdCheckResponse" />
+</config>

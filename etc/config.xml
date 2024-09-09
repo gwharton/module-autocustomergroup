@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <autocustomergroup>
+            <general>
+                <enabled>0</enabled>
+                <enablecurrencydownload>0</enablecurrencydownload>
+                <validate_on_each_transaction>1</validate_on_each_transaction>
+                <frontendlabel>Tax Identifier</frontendlabel>
+                <enable_sales_order_tax_scheme_table>0</enable_sales_order_tax_scheme_table>
+                <default_customer_group>0</default_customer_group>
+            </general>
+        </autocustomergroup>
+    </default>
+</config>

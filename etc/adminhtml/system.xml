@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="autocustomergroup" translate="label" sortOrder="135" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Automatic Customer Groups</label>
+            <tab>customer</tab>
+            <resource>Magento_Customer::config_customer</resource>
+            <group id="general" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <comment><![CDATA[
+                    <div class="autocustomergroup-schemeoverview">
+                        <p><b>LEGAL DISCLAIMER</b> - The author of this module accepts no responsibility for any errors caused by this module. It is up to you
+                            as the store owner/manager/exporter to ensure you are compliant with the laws in place in the countries that you ship to, and it is your
+                            responsibility to ensure that your store is implementing those rules and laws correctly. The author does not make any guarantees as to whether
+                            this module implements the rules and laws correctly. That is for you to determine. The statements given in the descriptions below and the
+                            rules that this module implement are not TAX advice. Please read and understand the scheme documentation yourself.</p>
+                    </div>
+                    ]]></comment>
+                <field id="enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Module</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="validate_on_each_transaction" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Validate on Each Transaction</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frontendlabel" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>VAT/Tax Identifier Frontend Label</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="enablecurrencydownload" translate="label" type="select" sortOrder="60" showInDefault="1" canRestore="1">
+                    <label>Enable download of Additional Base Currencies</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>To enable currency conversion of Import Thresholds using Magento Currency Conversion subsystem, the scheme currencies need to be
+                        configured as additional base currencies within Magento. Currency download will need to be triggered after enabling this setting. You don't need to
+                        enable this is you have already setup the currencies required and have the addon modules configured to use
+                        magento exchange rates.
+                    </comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="enable_sales_order_tax_scheme_table" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable recording of Tax Scheme details to sales_order_tax_scheme table</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="default_customer_group" translate="label" type="select" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Customer Group for Guest Orders</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Group</source_model>
+                    <comment>If the order is a guest order, which group should be used if none of the schemes generate a group change. (Existing
+                     customers will be assigned their correct customer group prior to being changed by this module)</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
