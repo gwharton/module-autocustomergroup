@@ -35,17 +35,17 @@ applicable for the countries that you sell into (not from). Let me know if you'v
 <p>When enabled, this module replaces the existing Magento VIV functionality with a new, more extendable system. When the module is disabled, the existing Magento functionality is restored.</p>
 <p>The module allows different base currencies to be used per website, if the price scope is set per website.</p>
 <img src="images/menu.png">
-<h2>General</h2>
-<img src="images/general.png">
+
+<h2>Configuration Options</h2>
 <ul>
-<li><b>Enable Automatic Assignment to Customer Group</b> - This activates and deactivates the module. When turned off, orders will be processed using the existing Magento settings ane the existing VAT control is used on the frontend.</li>
-<li><b>Validate on Each Transaction</b> - If the order is being placed by a customer that has existing Tax ID Validation data stored in their shipping address, then this can be re-used on each subsequent order, or it can be revalidated every time.</li>
-<li><b>VAT/Tax Identifier Frontend Label</b> - The label for the VAT/Tax Id Input Box at Checkout.</li>
-<li><b>Enable download of Additional Base Currencies</b> - Adds the Scheme Currencies (for enabled Schemes) to the list of Magento Base Currencies. This enables the downloading of the correct exchange rates for use in this module. This can be verified in Stores -> Currency Rates.</li>
-<li><b>Enable recording of Tax Scheme details to sales_order_tax_scheme table</b> - When an order is placed, and a tax rule is triggered that
-is linked to a tax scheme, then the tax scheme information is recorded in table sales_order_tax_scheme in the database.</li>
-<li><b>Default Customer Group for Guest Orders</b> - Which Customer Group to assign guest orders to.</li>
+<li><b>Enable Module</b> - This activates and deactivates the module. When turned off, orders will be processed using the existing Magento settings and the existing VAT control is used on the frontend. The module can be enabled and disabled on a per site basis.</li>
+<li><b>Validate on Each Transaction</b> - If the order is being placed by a customer that has existing Tax ID Validation data stored in their shipping address, then this can be re-used on each subsequent order, or it can be revalidated every time. This only applies for Customers with accounts with stored Shipping Addresses. This option does nothing for guest checkouts.</li>
+<li><b>VAT/Tax Identifier Frontend Label</b> - The label for the VAT/Tax Id Input Box at Checkout. Magento's default is "VAT Number". The default for this module is "Tax Identifier", but you can set this to anything you like.</li>
+<li><b>Enable download of Additional Base Currencies</b> - To enable currency conversion of Import Thresholds using Magento Currency subsystem, the enabled Scheme Currencies need to be configured as additional Base Currencies within Magento. Currency download will need to be triggered after enabling this setting. This enables the downloading of the correct exchange rates for use in this module, provided you haven't selected to use manual exchange rates within the addon modules. This can be verified in Stores -> Currency Rates.</li>
+<li><b>Enable recording of Tax Scheme details to sales_order_tax_scheme table</b> - When an order is placed, and a tax rule is triggered that is linked to a tax scheme, then the tax scheme information is recorded in table sales_order_tax_scheme in the database.</li>
+<li><b>Default Customer Group for Guest Orders</b> - If the order is a guest order, which group should be used if none of the schemes generate a group change. (Existing customers will be assigned their correct customer group prior to being changed by this module).</li>
 </ul>
+
 <h2>Frontend Validation Feedback</h2>
 <p>When enabled, this module replaces the frontend Form Element for the VAT/Tax ID Input box. If the currently selected Country has a Tax Scheme
 associated with it, and the Tax Scheme enabled, and a valid format VAT/Tax Id is input on the frontend, then the Id is validated by the relevant
