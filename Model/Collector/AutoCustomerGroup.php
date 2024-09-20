@@ -13,9 +13,23 @@ use Gw\AutoCustomerGroup\Api\Data\TaxIdCheckResponseInterfaceFactory;
 use Gw\AutoCustomerGroup\Model\AutoCustomerGroup as AutoCustomerGroupModel;
 
 /**
- * AutoCustomerGroup totals collector, configured from sales.xml which runs at the end of the stack
- * of collectors. If the group has changed, then the tax collectors must be re-run as the tax to be
- * applied will now be different. The collectors to be rerun can be configured in di.xml
+ * Magento Vanilla Collectors sequence
+ *
+ * 100  Magento\Quote\Model\Quote\Address\Total\Subtotal
+ * 200  Magento\Tax\Model\Sales\Total\Quote\Subtotal
+ * 225  Magento\Weee\Model\Total\Quote\Weee
+ * 300  Magento\SalesRule\Model\Quote\Discount
+ * 325  <-- This is a good place for us to be. Product discounts already applied
+ * 350  Magento\Quote\Model\Quote\Address\Total\Shipping
+ * 375  Magento\Tax\Model\Sales\Total\Quote\Shipping
+ * 400  Magento\SalesRule\Model\Quote\Address\Total\ShippingDiscount
+ * 450  Magento\Tax\Model\Sales\Total\Quote\Tax
+ * 460  Magento\Weee\Model\Total\Quote\WeeeTax
+ * 550  Magento\Quote\Model\Quote\Address\Total\Grand
+ * AutoCustomerGroup totals collector, configured from sales.xml
+ * What happens if we switch groups to a group where discount no longer applies? Should we re-run
+ * the discount collectors, what if that then changes the order total. We need to re-evaluate groups again.
+ * For now, lets just re-run all collectors that came before us, and carry on
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class AutoCustomerGroup extends AbstractTotal
@@ -227,9 +241,10 @@ class AutoCustomerGroup extends AbstractTotal
             );
             $quote->setCustomerGroupId($newGroup);
 
-            //The group has changed. We need to rerun the Tax collectors.
-            foreach ($this->additionalCollectors as $collector) {
+            //The group has changed. Which collectors should we re-run
+            foreach ($this->additionalCollectors as $code => $collector) {
                 if ($collector) {
+                    $collector->setCode($code);
                     $collector->collect($quote, $shippingAssignment, $total);
                 }
             }
