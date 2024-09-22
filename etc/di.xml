@@ -8,16 +8,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="Gw\AutoCustomerGroup\Model\Collector\AutoCustomerGroup">
-        <arguments>
-            <argument name="additionalCollectors" xsi:type="array">
-                <item name="subtotal" xsi:type="object">Magento\Quote\Model\Quote\Address\Total\Subtotal</item>
-                <item name="tax_subtotal" xsi:type="object">Magento\Tax\Model\Sales\Total\Quote\Subtotal</item>
-                <item name="weee" xsi:type="object">Magento\Weee\Model\Total\Quote\Weee</item>
-                <item name="discount" xsi:type="object">Magento\SalesRule\Model\Quote\Discount</item>
-            </argument>
-        </arguments>
-    </type>
 
     <type name="Magento\Directory\Model\CurrencyConfig">
         <plugin name="AutoCustomerGroup_add_additional_base_currencies"

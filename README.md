@@ -102,3 +102,19 @@ used on an order, can be included on the Invoice PDF's for example.</p>
     }
 </code>
 </pre>
+
+<h2>Known Limitations</h2>
+<p>The following Totals Collectors within Magento are run before this module assesses whether any group change is required.</p>
+<ul>
+<li>Magento\Quote\Model\Quote\Address\Total\Subtotal</li>
+<li>Magento\Tax\Model\Sales\Total\Quote\Subtotal</li>
+<li>Magento\Weee\Model\Total\Quote\Weee</li>
+<li>Magento\SalesRule\Model\Quote\Discount</li>
+</ul>
+<p>If the order includes a discount or weee charges, then these will be included in the order totals before assessing any 
+order thresholds. Whilst this means that the order will be properly assessed including discounts and wee charges, should 
+this module determine that the customer group should change, discounts and wee charges on the order are NOT reassessed 
+after the group has changed. e.g If you have a discount that is applied to orders from the default customer group and 
+the module adjusts the customer group to one that the discount does not apply, the discount will still be applied
+on the order.</p>
+
