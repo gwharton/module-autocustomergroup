@@ -8,27 +8,27 @@ interface TaxSchemeInterface
 {
     /**
      * @param string $countryCode
-     * @param string|null $taxId
+     * @param string $taxId
      * @return TaxIdCheckResponseInterface
      */
     public function checkTaxId(
         string $countryCode,
-        ?string $taxId
+        string $taxId
     ): TaxIdCheckResponseInterface;
 
     /**
      * @param string $customerCountryCode
-     * @param string|null $customerPostCode
      * @param bool $taxIdValidated
      * @param float $orderValue
+     * @param string|null $customerPostCode
      * @param int|null $storeId
      * @return int|null
      */
     public function getCustomerGroup(
         string $customerCountryCode,
-        ?string $customerPostCode,
         bool $taxIdValidated,
         float $orderValue,
+        ?string $customerPostCode,
         ?int $storeId
     ): ?int;
 

@@ -112,9 +112,9 @@ class Validate implements HttpPostActionInterface
 
                 $groupId = $this->autoCustomerGroup->getCustomerGroup(
                     $countryCode,
-                    $postcode,
                     $taxIdCheckResponse->getIsValid(),
                     $quote,
+                    $postcode,
                     $storeId
                 );
                 $responseData = [

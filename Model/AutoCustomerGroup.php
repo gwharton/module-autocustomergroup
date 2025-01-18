@@ -61,18 +61,18 @@ class AutoCustomerGroup
 
     /**
      * @param string $customerCountryCode
-     * @param string $customerPostCode
      * @param TaxIdCheckResponseInterface $validationResults
      * @param Quote $quote
-     * @param int $storeId
+     * @param string|null $customerPostCode
+     * @param int|null $storeId
      * @return int|null
      */
     public function getCustomerGroup(
         string $customerCountryCode,
-        string $customerPostCode,
         bool $taxIdValidated,
         Quote $quote,
-        int $storeId
+        ?string $customerPostCode,
+        ?int $storeId
     ): ?int {
         if ($this->isModuleEnabled($storeId)) {
             foreach ($this->taxSchemes->getEnabledTaxSchemes($storeId) as $taxScheme) {
@@ -80,9 +80,9 @@ class AutoCustomerGroup
                     $schemeOrderValue = $taxScheme->getOrderValue($quote);
                     return $taxScheme->getCustomerGroup(
                         $customerCountryCode,
-                        $customerPostCode,
                         $taxIdValidated,
                         $schemeOrderValue,
+                        $customerPostCode,
                         $storeId
                     );
                 }

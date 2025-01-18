@@ -64,7 +64,6 @@ class BeforeAddressSaveObserverPlugin
             //Customer group at this stage, as the this depends on order value, which we
             //Don't have at this stage.
             if (!empty($customerAddress->getVatId()) &&
-                !empty($customerAddress->getVatId()) &&
                 $customer->getStore()->getId()) {
                 $taxIdCheckResponse = $this->autoCustomerGroup->checkTaxId(
                     $customerAddress->getCountryId(),

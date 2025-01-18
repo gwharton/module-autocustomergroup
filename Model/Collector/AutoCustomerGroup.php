@@ -179,9 +179,9 @@ class AutoCustomerGroup extends AbstractTotal
         //Get the auto assigned group for customer, returns null if group shouldn't be changed.
         $newGroup = $this->autoCustomerGroup->getCustomerGroup(
             $quoteAddress->getCountryId(),
-            $quoteAddress->getPostcode() ?: "",
             $validationResult ? $validationResult->getIsValid() : false,
             $quote,
+            $quoteAddress->getPostcode(),
             $storeId
         );
 
