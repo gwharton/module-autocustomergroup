@@ -12,6 +12,10 @@
         "magento/module-sales": "*",
         "magento/module-store": "*",
         "magento/module-tax": "*",
+        "magento/module-backend": "*",
+        "magento/module-config": "*",
+        "magento/module-eav": "*",
+        "magento/module-ui": "*",
         "psr/log": "*"
     },
     "config": {
