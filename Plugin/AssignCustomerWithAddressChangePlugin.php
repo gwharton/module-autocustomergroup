@@ -37,7 +37,7 @@ class AssignCustomerWithAddressChangePlugin
      */
     public function afterAssignCustomerWithAddressChange(Quote $subject, $result, CustomerInterface $customer, Address $billingAddress = null, Address $shippingAddress = null)
     {
-        if ($this->autoCustomerGroup->isModuleEnabled($quote->getStoreId())) {
+        if ($this->autoCustomerGroup->isModuleEnabled($subject->getStoreId())) {
             //Ensure that the shipping address is re-assigned to the quote. This causes it to be
             //saved, and in doing so, copies the vat validation data to the quote address object
             $this->shippingAddressManagement->assign($result->getId(), $result->getShippingAddress());
