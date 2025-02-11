@@ -151,13 +151,11 @@ class AutoGroupTest extends TestCase
      * @magentoAdminConfigFixture current_store currency/options/base GBP
      * @magentoConfigFixture current_store autocustomergroup/ukvat/enabled 1
      * @magentoConfigFixture current_store autocustomergroup/ukvat/registrationnumber GB553557881
-     * @magentoConfigFixture current_store autocustomergroup/ukvat/environment sandbox
      * @magentoConfigFixture current_store autocustomergroup/ukvat/usemagentoexchangerate 0
      * @magentoConfigFixture current_store autocustomergroup/ukvat/exchangerate 1
      * @magentoConfigFixture current_store autocustomergroup/ukvat/importthreshold 135
      * @magentoConfigFixture current_store autocustomergroup/euvat/enabled 1
      * @magentoConfigFixture current_store autocustomergroup/euvat/registrationnumber IE8256796U
-     * @magentoConfigFixture current_store autocustomergroup/euvat/environment sandbox
      * @magentoConfigFixture current_store autocustomergroup/euvat/usemagentoexchangerate 0
      * @magentoConfigFixture current_store autocustomergroup/euvat/exchangerate 0.88603
      * @magentoConfigFixture current_store autocustomergroup/euvat/importthreshold 150
@@ -184,18 +182,11 @@ class AutoGroupTest extends TestCase
         ?string $merchantPostCode,
         string $destinationCountry,
         ?string $destinationPostcode,
-        ?string $destinationVatId,
+        ?bool $vatIsValid,
         string $customerGroup,
-        float $percentageDiscount,
-        bool $onlineTest = false
+        float $percentageDiscount
     ): void {
         $storeId = $this->storeManager->getStore()->getId();
-
-        $this->config->setValue(
-            "autocustomergroup/newzealandgst/validate_online",
-            $onlineTest,
-            ScopeInterface::SCOPE_STORE
-        );
 
         $groups = [0];
         $groups[] = $this->createGroupAndAssign('uk_domestic', 'autocustomergroup/ukvat/domestic');
@@ -278,7 +269,7 @@ class AutoGroupTest extends TestCase
 
         $shippingAddress = $this->addressFactory->create(['data' => $addressData]);
         $shippingAddress->setAddressType('shipping');
-        $shippingAddress->setVatId($destinationVatId);
+        $shippingAddress->setVatIsValid($vatIsValid);
         $billingAddress = $this->addressFactory->create(['data' => $addressData]);
         $billingAddress->setAddressType('billing');
 
@@ -365,149 +356,111 @@ class AutoGroupTest extends TestCase
         //Merchant Postcode
         //Destination Country
         //Destination Postcode
-        //Tax ID
+        //Tax ID Valid
         //Expected Customer Group
         //Discount Percentage
-        //Online Test
         return [
             //New Zealand GST
             //Threshold is 1000NZD = 520.00GBP
-            [1, 10, 'NZ', null, 'NZ', "0620", '', 'newzealand_domestic', 0],
-
-            //Online and offline should both show invalid
-            [1, 10, 'NZ', null, 'NZ', "0620", '1234', 'newzealand_domestic', 0, true],
-            [1, 10, 'NZ', null, 'NZ', "0620", '1234', 'newzealand_domestic', 0],
-
-            //Online check will show valid but no GST, Offline check will show valid
-            [1, 10, 'NZ', null, 'NZ', "0620", '9429032097351', 'newzealand_domestic', 0, true],
-            [1, 10, 'NZ', null, 'NZ', "0620", '9429032097351', 'newzealand_domestic', 0],
-
-            //Online check will show valid with GST, Offline check will show valid
-            [1, 10, 'GB', 'NE1 1AA', 'NZ', "0620", '9429050853731', 'newzealand_import_b2b', 0, true],
-            [1, 10, 'GB', 'NE1 1AA', 'NZ', "0620", '9429050853731', 'newzealand_import_b2b', 0],
-
-            //Online check will show valid with GST, Offline check will show valid
-            [10, 1000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429050853731', 'newzealand_import_b2b', 0, true],
-            [10, 1000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429050853731', 'newzealand_import_b2b', 0],
-
-            //Online check will show valid with GST, Offline check will show valid
-            [1, 4000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429049835892', 'newzealand_import_b2b', 0, true],
-            [1, 4000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429049835892', 'newzealand_import_b2b', 0],
-
-            //Online check will show valid but no GST, Offline check will show valid
-            [10, 1000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429036975273', 'newzealand_import_untaxed', 0, true],
-            [10, 1000, 'GB', 'NE1 1AA', 'NZ', "0620", '9429036975273', 'newzealand_import_b2b', 0],
-
-            //Online and offline should both show invalid
-            [1, 10, 'GB', 'NE1 1AA', 'NZ', "0620", '1234', 'newzealand_import_taxed', 0, true],
-            [1, 10, 'GB', 'NE1 1AA', 'NZ', "0620", '1234', 'newzealand_import_taxed', 0],
-
-            [1, 10, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_taxed', 0],
-            [5, 100, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_taxed', 0],
-            [5, 500, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_taxed', 0],
-            [1, 520, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_taxed', 0],
-            [1, 530, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_untaxed', 0],
-            [1, 2000, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_untaxed', 0],
-            [5, 600, 'GB', 'NE1 1AA', 'NZ', "0620", '', 'newzealand_import_untaxed', 0],
-
-            //Online and offline should both show invalid
-            [5, 4000, 'GB', 'NE1 1AA', 'NZ', "0620", '1234', 'newzealand_import_untaxed', 0, true],
-            [5, 4000, 'GB', 'NE1 1AA', 'NZ', "0620", '1234', 'newzealand_import_untaxed', 0],
+            [1,     10,     'NZ',   null,       'NZ',   "0620",         false,  'newzealand_domestic',          0],
+            [1,     10,     'NZ',   null,       'NZ',   "0620",         true,   'newzealand_domestic',          0],
+            [1,     10,     'GB',   'NE1 1AA',  'NZ',   "0620",         true,   'newzealand_import_b2b',        0],
+            [10,    1000,   'GB',   'NE1 1AA',  'NZ',   "0620",         true,   'newzealand_import_b2b',        0],
+            [1,     4000,   'GB',   'NE1 1AA',  'NZ',   "0620",         true,   'newzealand_import_b2b',        0],
+            [10,    1000,   'GB',   'NE1 1AA',  'NZ',   "0620",         true,   'newzealand_import_b2b',        0],
+            [1,     10,     'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_taxed',      0],
+            [1,     10,     'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_taxed',      0],
+            [5,     100,    'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_taxed',      0],
+            [5,     500,    'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_taxed',      0],
+            [1,     520,    'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_taxed',      0],
+            [1,     530,    'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_untaxed',    0],
+            [1,     2000,   'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_untaxed',    0],
+            [5,     600,    'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_untaxed',    0],
+            [5,     4000,   'GB',   'NE1 1AA',  'NZ',   "0620",         false,  'newzealand_import_untaxed',    0],
 
             //USA
-            [1, 10, 'GB', 'NE1 1AA', 'US', '90210', '', 'NOT LOGGED IN', 0 ],
+            [1,     10,     'GB',   'NE1 1AA',  'US',   '90210',        false,  'NOT LOGGED IN',                0],
 
             //Brazil
-            [1, 10, 'FR', null, 'BR', '73700-000', '', 'NOT LOGGED IN', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'BR', '73700-000', '', 'NOT LOGGED IN', 0],
+            [1,     10,     'FR',   null,       'BR',   '73700-000',    false,  'NOT LOGGED IN',                0],
+            [1,     10,     'GB',   'NE1 1AA',  'BR',   '73700-000',    false,  'NOT LOGGED IN',                0],
 
             //UK VAT
             //Threshold is 135GBP
-            [1, 10, 'GB', 'NE1 1AA', 'GB', 'NE1 1AA', '', 'uk_domestic', 0],
-            [1, 10, 'GB', 'BT1 1AA', 'GB', 'NE1 1AA', '', 'uk_domestic', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'GB', 'BT1 1AA', '', 'uk_domestic', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'GB', 'NE1 1AA', 'GB948561936944', 'uk_domestic', 0], //VAT is valid
-            [1, 10, 'IM', 'NE1 1AA', 'GB', 'NE1 1AA', 'GB948561936944', 'uk_domestic', 0], //VAT is valid
-            [1, 10, 'GB', 'NE1 1AA', 'IM', 'IM1 1AA', 'GB000549615108', 'uk_domestic', 0], //VAT is valid
-            [1, 10, 'IM', 'IM1 1AA', 'IM', 'IM1 1AA', 'GB000549615108', 'uk_domestic', 0], //VAT is valid
-            [1, 10, 'GB', 'NE1 1AA', 'GB', 'NE1 1AA', 'GB123', 'uk_domestic', 0], //VAT is invalid
-            [1, 10, 'GB', 'NE1 1AA', 'GB', 'NE1 1AA', 'GB948561936943', 'uk_domestic', 0], //VAT is invalid
-            [1, 10, 'FR', null, 'GB', 'BT1 1AA', 'GB948561936944', 'uk_intraeu_b2b', 0], //VAT is invalid
-            [1, 10, 'FR', null, 'GB', 'BT1 1AA', '', 'uk_intraeu_b2c', 0],
-            [1, 10, 'FR', null,  'GB', 'NE1 1AA', 'GB948561936944', 'uk_import_b2b', 0], //VAT is valid
-            [10, 10, 'FR', null, 'GB', 'NE1 1AA', 'GB948561936944', 'uk_import_b2b', 0], //VAT is valid
-            [1, 10, 'FR', null, 'GB', 'NE1 1AA', '', 'uk_import_taxed', 0],
-            [20, 10, 'FR', null, 'GB', 'NE1 1AA', '', 'uk_import_taxed', 50], //20 x 10ea = 200 * 50% = 100
-            [1, 130, 'FR', null, 'GB', 'NE1 1AA', '', 'uk_import_taxed', 0],
-
-            [14, 10, 'FR', null, 'GB', 'NE1 1AA', '', 'uk_import_untaxed', 0],
-            [30, 10, 'FR', null, 'GB', 'NE1 1AA', '', 'uk_import_untaxed', 50], //30 x 10ea = 300 * 50% = 200
+            [1,     10,     'GB',   'NE1 1AA',  'GB',   'NE1 1AA',      false,  'uk_domestic',                  0],
+            [1,     10,     'GB',   'BT1 1AA',  'GB',   'NE1 1AA',      false,  'uk_domestic',                  0],
+            [1,     10,     'GB',   'NE1 1AA',  'GB',   'BT1 1AA',      false,  'uk_domestic',                  0],
+            [1,     10,     'GB',   'NE1 1AA',  'GB',   'NE1 1AA',      true,   'uk_domestic',                  0],
+            [1,     10,     'IM',   'NE1 1AA',  'GB',   'NE1 1AA',      true,   'uk_domestic',                  0],
+            [1,     10,     'GB',   'NE1 1AA',  'IM',   'IM1 1AA',      true,   'uk_domestic',                  0],
+            [1,     10,     'IM',   'IM1 1AA',  'IM',   'IM1 1AA',      true,   'uk_domestic',                  0],
+            [1,     10,     'GB',   'NE1 1AA',  'GB',   'NE1 1AA',      false,  'uk_domestic',                  0],
+            [1,     10,     'GB',   'NE1 1AA',  'GB',   'NE1 1AA',      false,  'uk_domestic',                  0],
+            [1,     10,     'FR',   null,       'GB',   'BT1 1AA',      true,   'uk_intraeu_b2b',               0],
+            [1,     10,     'FR',   null,       'GB',   'BT1 1AA',      false,  'uk_intraeu_b2c',               0],
+            [1,     10,     'FR',   null,       'GB',   'NE1 1AA',      true,   'uk_import_b2b',                0],
+            [10,    10,     'FR',   null,       'GB',   'NE1 1AA',      true,   'uk_import_b2b',                0],
+            [1,     10,     'FR',   null,       'GB',   'NE1 1AA',      false,  'uk_import_taxed',              0],
+            [20,    10,     'FR',   null,       'GB',   'NE1 1AA',      false,  'uk_import_taxed',              50], // 20 x 10ea = 200 - 50% = 100
+            [1,     130,    'FR',   null,       'GB',   'NE1 1AA',      false,  'uk_import_taxed',              0],
+            [14,    10,     'FR',   null,       'GB',   'NE1 1AA',      false,  'uk_import_untaxed',            0],
+            [30,    10,     'FR',   null,       'GB',   'NE1 1AA',      false,  'uk_import_untaxed',            50], // 30 x 10ea = 300 - 50% = 200
 
             //EU VAT
             //45-Threshold is 150EUR = 132.90 GBP
-            [1, 10, 'IE', null, 'IE', null, '', 'eu_domestic', 0],
-            [1, 10, 'IE', null, 'IE', null, 'IE8256796U', 'eu_domestic', 0],
-            [1, 10, 'DE', null, 'IE', null, 'IE8256796U', 'eu_intraeu_b2b', 0],
-            [1, 10, 'GB', 'BT1 1AA', 'IE', null, 'IE8256796U', 'eu_intraeu_b2b', 0],
-            [1, 10, 'DE', null, 'IE', null, 'IE8256796Z', 'eu_intraeu_b2c', 0], //VAT is invalid
-            [1, 10, 'GB', 'BT1 1AA', 'IE', null, '', 'eu_intraeu_b2c', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'IE', null, 'IE8256796U', 'eu_import_b2b', 0],
-            //30 x 10ea = 300,  * 50% = 150
-            [30, 10, 'GB', 'NE1 1AA', 'IE', null, 'IE8256796U', 'eu_import_b2b', 50],
-            //18 x 10ea = 180,  * 50% = 90
-            [18, 10, 'GB', 'NE1 1AA', 'IE', null, 'IE8256796U', 'eu_import_b2b', 50],
-            //16 x 10ea = 160,  * 50% = 80
-            [16, 10, 'GB', 'NE1 1AA', 'IE', null, 'IE8256796U', 'eu_import_b2b', 50],
-            [1, 10, 'BR', null, 'IE', null, 'IE8256796U', 'eu_import_b2b', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'FR', '75001', '', 'eu_import_taxed', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'IE', null, '123456', 'eu_import_taxed', 0],
-            [1, 10, 'BR', null, 'IE', null, '', 'eu_import_taxed', 0],
-            [1, 130, 'BR', null, 'IE', null, '', 'eu_import_taxed', 0],
-            [1, 140, 'BR', null, 'IE', null, '', 'eu_import_untaxed', 0],
-            [14, 10, 'GB', 'NE1 1AA', 'FR', '75001', '', 'eu_import_untaxed', 0],
-            [28, 10, 'GB', 'NE1 1AA', 'FR', '75001', '', 'eu_import_untaxed', 50], //28 x 10ea = 280 * 50% = 140
+            [1,     10,     'IE',   null,       'IE',   null,           false,  'eu_domestic',                  0],
+            [1,     10,     'IE',   null,       'IE',   null,           true,   'eu_domestic',                  0],
+            [1,     10,     'DE',   null,       'IE',   null,           true,   'eu_intraeu_b2b',               0],
+            [1,     10,     'GB',   'BT1 1AA',  'IE',   null,           true,   'eu_intraeu_b2b',               0],
+            [1,     10,     'DE',   null,       'IE',   null,           false,  'eu_intraeu_b2c',               0],
+            [1,     10,     'GB',   'BT1 1AA',  'IE',   null,           false,  'eu_intraeu_b2c',               0],
+            [1,     10,     'GB',   'NE1 1AA',  'IE',   null,           true,   'eu_import_b2b',                0],
+            [30,    10,     'GB',   'NE1 1AA',  'IE',   null,           true,   'eu_import_b2b',                50], // 30 x 10ea = 300 - 50% = 150
+            [18,    10,     'GB',   'NE1 1AA',  'IE',   null,           true,   'eu_import_b2b',                50], // 18 x 10ea = 180 - 50% = 90
+            [16,    10,     'GB',   'NE1 1AA',  'IE',   null,           true,   'eu_import_b2b',                50], // 16 x 10ea = 160 - 50% = 80
+            [1,     10,     'BR',   null,       'IE',   null,           true,   'eu_import_b2b',                0],
+            [1,     10,     'GB',   'NE1 1AA',  'FR',   '75001',        false,  'eu_import_taxed',              0],
+            [1,     10,     'GB',   'NE1 1AA',  'IE',   null,           false,  'eu_import_taxed',              0],
+            [1,     10,     'BR',   null,       'IE',   null,           false,  'eu_import_taxed',              0],
+            [1,     130,    'BR',   null,       'IE',   null,           false,  'eu_import_taxed',              0],
+            [1,     140,    'BR',   null,       'IE',   null,           false,  'eu_import_untaxed',            0],
+            [14,    10,     'GB',   'NE1 1AA',  'FR',   '75001',        false,  'eu_import_untaxed',            0],
+            [28,    10,     'GB',   'NE1 1AA',  'FR',   '75001',        false,  'eu_import_untaxed',            50], // 28 x 10ea = 280 - 50% = 140
 
             //Norway VOEC
             //Threshold is 3000NOK = 256.20GBP
-            [1, 10, 'NO', '1234', 'NO', '1366', '', 'norway_domestic', 0],
-            [1, 10, 'NO', '1234', 'NO', '1366', '912345678', 'norway_domestic', 0], //Valid Business No
-            [1, 10, 'NO', '1234', 'NO', '1366', '2443', 'norway_domestic', 0], //Invalid Business No
-            [1, 10, 'GB', 'NE1 1AA', 'NO', '1366', '912345678', 'norway_import_b2b', 0], //Valid Business No
-            [10, 20, 'GB', 'NE1 1AA', 'NO', '1366', '912345678', 'norway_import_b2b', 0], //Valid Business No
-            [1, 300, 'GB', 'NE1 1AA', 'NO', '1366', '812345678', 'norway_import_b2b', 0], //Valid Business No
-            [1, 10, 'GB', 'NE1 1AA', 'NO', '1366', '2443', 'norway_import_taxed', 0], //Invalid Business No
-            [1, 10, 'GB', 'NE1 1AA', 'NO', '1366', '', 'norway_import_taxed', 0],
-            [10, 200, 'GB', 'NE1 1AA', 'NO', '1366', '', 'norway_import_taxed', 0],
-            [1, 250, 'GB', 'NE1 1AA', 'NO', '1366', '', 'norway_import_taxed', 0],
-            [1, 260, 'GB', 'NE1 1AA', 'NO', '1366', '', 'norway_import_untaxed', 0],
-            [5, 300, 'GB', 'NE1 1AA', 'NO', '1366', '', 'norway_import_untaxed', 0],
-            [1, 300, 'GB', 'NE1 1AA', 'NO', '1366', '2443', 'norway_import_untaxed', 0], //Invalid Business No
+            [1,     10,     'NO',   '1234',     'NO',   '1366',         false,  'norway_domestic',              0],
+            [1,     10,     'NO',   '1234',     'NO',   '1366',         true,   'norway_domestic',              0],
+            [1,     10,     'GB',   'NE1 1AA',  'NO',   '1366',         true,   'norway_import_b2b',            0],
+            [10,    20,     'GB',   'NE1 1AA',  'NO',   '1366',         true,   'norway_import_b2b',            0],
+            [1,     300,    'GB',   'NE1 1AA',  'NO',   '1366',         true,   'norway_import_b2b',            0],
+            [1,     10,     'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_taxed',          0],
+            [1,     10,     'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_taxed',          0],
+            [10,    200,    'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_taxed',          0],
+            [1,     250,    'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_taxed',          0],
+            [1,     260,    'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_untaxed',        0],
+            [5,     300,    'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_untaxed',        0],
+            [1,     300,    'GB',   'NE1 1AA',  'NO',   '1366',         false,  'norway_import_untaxed',        0],
 
             //Australia GST
             //Threshold is 1000AUD = 566.60GBP
-            [1, 10, 'AU', null, 'AU', '2620', '', 'australia_domestic', 0],
-            [1, 10, 'AU', null, 'AU', '2620', '1234', 'australia_domestic', 0], //Invalid Business No
-            //Valid Business No, with GST registration
-            [1, 10, 'AU', null, 'AU', '2620', '72 629 951 766', 'australia_domestic', 0],
-            //Valid Business No, with GST registration
-            [1, 10, 'GB', 'NE1 1AA', 'AU', '2620', '72 629 951 766', 'australia_import_b2b', 0],
-            //Valid Business No, with GST registration
-            [10, 1000, 'GB', 'NE1 1AA', 'AU', '2620', '72 629 951 766', 'australia_import_b2b', 0],
-            //Valid Business No, with GST registration
-            [1, 4000, 'GB', 'NE1 1AA', 'AU', '2620', '72 629 951 766', 'australia_import_b2b', 0],
-            //Valid Business No, but no GST registration
-            [1, 10, 'GB', 'NE1 1AA', 'AU', '2620', '50 110 219 460', 'australia_import_taxed', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'AU', '2620', '1234', 'australia_import_taxed', 0], //Invalid Business No
-            [1, 10, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_taxed', 0],
-            [1, 10, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_taxed', 0],
-            [56, 10, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_taxed', 0],
-            [5, 100, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_taxed', 0],
-            [1, 560, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_taxed', 0],
-            [2, 570, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_untaxed', 50],
-            [1, 570, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_untaxed', 0],
-            [2, 570, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_untaxed', 50],
-            [9, 100, 'GB', 'NE1 1AA', 'AU', '2620', '', 'australia_import_untaxed', 0],
-            [5, 4000, 'GB', 'NE1 1AA', 'AU', '2620', '1234', 'australia_import_untaxed', 0], //Invalid Business No
+            [1,     10,     'AU',   null,       'AU',   '2620',         false,  'australia_domestic',           0],
+            [1,     10,     'AU',   null,       'AU',   '2620',         true,   'australia_domestic',           0],
+            [1,     10,     'GB',   'NE1 1AA',  'AU',   '2620',         true,   'australia_import_b2b',         0],
+            [10,    1000,   'GB',   'NE1 1AA',  'AU',   '2620',         true,   'australia_import_b2b',         0],
+            [1,     4000,   'GB',   'NE1 1AA',  'AU',   '2620',         true,   'australia_import_b2b',         0],
+            [1,     10,     'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [1,     10,     'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [1,     10,     'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [56,    10,     'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [5,     100,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [1,     560,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       0],
+            [2,     570,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_taxed',       60], // 2 x 570ea = 1140 - 60% = 456
+            [2,     570,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_untaxed',     50], // 2 x 570ea = 1140 - 50% = 570
+            [1,     570,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_untaxed',     0],
+            [2,     570,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_untaxed',     50], // 2 x 570ea = 1140 - 50% = 570
+            [9,     100,    'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_untaxed',     0],
+            [5,     4000,   'GB',   'NE1 1AA',  'AU',   '2620',         false,  'australia_import_untaxed',     0],
         ];
     }
 }

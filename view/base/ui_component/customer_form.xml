@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="address" class="Magento\Customer\Ui\Component\Form\AddressFieldset">
+        <insertListing name="customer_address_listing" component="Gw_AutoCustomerGroup/js/form/components/insert-listing">
+        </insertListing>
+    </fieldset>
+</form>

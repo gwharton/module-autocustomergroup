@@ -37,7 +37,6 @@ class CurrencyConfigPlugin
      * @param CurrencyConfig $subject
      * @param array $result
      * @param string $path
-     * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterGetConfigCurrencies(

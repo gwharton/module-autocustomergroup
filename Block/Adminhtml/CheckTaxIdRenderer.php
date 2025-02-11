@@ -68,6 +68,7 @@ class CheckTaxIdRenderer extends Vat
                         'countryElementId' => $form->getElement('country_id')->getHtmlId(),
                         'postcodeElementId' => $form->getElement('postcode')->getHtmlId(),
                         'groupIdHtmlId' => 'group_id',
+                        'type' => $this->getJsVariablePrefix(),
                         'validateUrl' => $this->_urlBuilder->getUrl('autocustomergroup/createorder/validate')
                     ]
                 );

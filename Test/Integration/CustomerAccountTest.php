@@ -14,6 +14,7 @@ use Magento\Customer\Api\Data\AddressInterfaceFactory;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
@@ -30,6 +31,8 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Customer\Api\Data\GroupInterfaceFactory;
 use Magento\Quote\Api\Data\AddressInterfaceFactory as QuoteAddressInterfaceFactory;
 use PHPUnit\Framework\TestCase;
+use Magento\Customer\Model\AddressFactory;
+use Magento\Customer\Model\AddressRegistry;
 
 /**
  * Test placing an order with existing Customer Account
@@ -86,6 +89,17 @@ class CustomerAccountTest extends TestCase
     private $product;
 
     /**
+     * @var AddressFactory
+     */
+    protected $addressFactory;
+
+    /**
+     * @var AddressRegistry
+     */
+    protected $addressRegistry;
+
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -98,6 +112,8 @@ class CustomerAccountTest extends TestCase
         $this->config = $this->objectManager->get(ReinitableConfigInterface::class);
         $this->customerRepository = $this->objectManager->create(CustomerRepositoryInterface::class);
         $this->caRepository = $this->objectManager->get(AddressRepositoryInterface::class);
+        $this->addressFactory = $this->objectManager->get(AddressFactory::class);
+        $this->addressRegistry = $this->objectManager->get(AddressRegistry::class);
 
         $storeId = $this->storeManager->getStore()->getId();
 
@@ -153,7 +169,7 @@ class CustomerAccountTest extends TestCase
      * @param $shopCountry
      * @param $buyerCountry
      * @param $postCode
-     * @param $taxid
+     * @param $vatIsValid
      * @param $expectedGroup
      * @return void
      * @throws InputException
@@ -165,7 +181,6 @@ class CustomerAccountTest extends TestCase
      * @magentoConfigFixture current_store tax/classes/shipping_tax_class 2
      * @magentoConfigFixture current_store autocustomergroup/ukvat/enabled 1
      * @magentoConfigFixture current_store autocustomergroup/ukvat/registrationnumber GB553557881
-     * @magentoConfigFixture current_store autocustomergroup/ukvat/environment sandbox
      * @magentoConfigFixture current_store autocustomergroup/ukvat/usemagentoexchangerate 0
      * @magentoConfigFixture current_store autocustomergroup/ukvat/exchangerate 1
      * @magentoConfigFixture current_store autocustomergroup/ukvat/importthreshold 135
@@ -178,7 +193,7 @@ class CustomerAccountTest extends TestCase
         $shopCountry,
         $buyerCountry,
         $postCode,
-        $taxid,
+        $vatIsValid,
         $expectedGroup
     ): void {
         $storeId = $this->storeManager->getStore()->getId();
@@ -195,10 +210,12 @@ class CustomerAccountTest extends TestCase
             ->setFirstname("First")
             ->setCustomerId($this->customer->getId())
             ->setIsDefaultBilling(true)
-            ->setIsDefaultShipping(true)
-            ->setVatId($taxid);
+            ->setIsDefaultShipping(true);
+        $extensionAttributes = $customerAddress->getExtensionAttributes();
+        $extensionAttributes->setVatIsValid($vatIsValid);
+        $customerAddress->setExtensionAttributes($extensionAttributes);
+        $this->caRepository->save($customerAddress);
 
-        $customerAddress = $this->caRepository->save($customerAddress);
         if (is_string($startingGroup)) {
             $startingGroup = $this->config->getValue(
                 "autocustomergroup/ukvat/" . $startingGroup,
@@ -221,7 +238,7 @@ class CustomerAccountTest extends TestCase
         $quote->getPayment()->setMethod('checkmo');
         $quoteAddress = $this->objectManager->get(QuoteAddressInterfaceFactory::class)->create();
         $quoteAddress->importCustomerAddressData(
-            $this->caRepository->getById($this->customer->getDefaultBilling())
+            $customerAddress
         );
         $quote->setShippingAddress($quoteAddress);
         $quote->setBillingAddress($quoteAddress);
@@ -254,27 +271,27 @@ class CustomerAccountTest extends TestCase
         //ShopCountry
         //BuyerCountry
         //Postcode
-        //VatID
+        //VatIsValid
         //ExpectedGroup
         return [
-            ["domestic", 140, null, "GB", null, null, "domestic"],
-            ["domestic", 130, "US", "GB", "SW1 1AA", "", "importtaxed"],
-            ["domestic", 140, "US", "GB", "SW1 1AA", "", "importuntaxed"],
-            ["domestic", 130, "GB", "GB", "SW1 1AA", "", "domestic"],
-            ["domestic", 140, "GB", "GB", "SW1 1AA", "", "domestic"],
-            [0, 140, "GB", "GB", "SW1 1AA", "", "domestic"],
-            [0, 140, "FR", "FR", "7000", "", 0],
-            [0, 130, "GB", "GB", "SW1 1AA", "", "domestic"],
-            [0, 130, "FR", "FR", "7000", "", 0],
-            ["domestic", 140, "FR", "FR", "7000", "", "domestic"],
-            ["importuntaxed", 140, "FR", "FR", "7000", "", "importuntaxed"],
-            [0, 140, "FR", "GB", "BT1 1AA", "", "intraeub2c"],
-            [0, 140, "FR", "GB", "BT1 1AA", "GB146295999727", "intraeub2b"],
-            [0, 130, "FR", "GB", "BT1 1AA", "", "intraeub2c"],
-            [0, 130, "FR", "GB", "BT1 1AA", "GB146295999727", "intraeub2b"],
-            [0, 140, "FR", "GB", "", "GB146295999727", "importb2b"],
-            ["domestic", 140, "GB", "GB", null, "GB146295999727", "domestic"],
-            ["domestic", 140, "GB", "GB", null, null, "domestic"],
+            ["domestic",        140,    null,   "GB",   null,       false,  "domestic"],
+            ["domestic",        130,    "US",   "GB",   "SW1 1AA",  false,  "importtaxed"],
+            ["domestic",        140,    "US",   "GB",   "SW1 1AA",  false,  "importuntaxed"],
+            ["domestic",        130,    "GB",   "GB",   "SW1 1AA",  false,  "domestic"],
+            ["domestic",        140,    "GB",   "GB",   "SW1 1AA",  false,  "domestic"],
+            [0,                 140,    "GB",   "GB",   "SW1 1AA",  false,  "domestic"],
+            [0,                 140,    "FR",   "FR",   "7000",     false,  0],
+            [0,                 130,    "GB",   "GB",   "SW1 1AA",  false,  "domestic"],
+            [0,                 130,    "FR",   "FR",   "7000",     false,  0],
+            ["domestic",        140,    "FR",   "FR",   "7000",     false,  "domestic"],
+            ["importuntaxed",   140,    "FR",   "FR",   "7000",     false,  "importuntaxed"],
+            [0,                 140,    "FR",   "GB",   "BT1 1AA",  false,  "intraeub2c"],
+            [0,                 140,    "FR",   "GB",   "BT1 1AA",  true,   "intraeub2b"],
+            [0,                 130,    "FR",   "GB",   "BT1 1AA",  false,  "intraeub2c"],
+            [0,                 130,    "FR",   "GB",   "BT1 1AA",  true,   "intraeub2b"],
+            [0,                 140,    "FR",   "GB",   "",         true,   "importb2b"],
+            ["domestic",        140,    "GB",   "GB",   null,       true,   "domestic"],
+            ["domestic",        140,    "GB",   "GB",   null,       false,  "domestic"],
         ];
     }
 }

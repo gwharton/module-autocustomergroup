@@ -21,10 +21,6 @@
         <plugin name="AutoCustomerGroup_disable_customer_observer_afteraddresssave"
                 type="Gw\AutoCustomerGroup\Plugin\Customer\DisableAfterAddressSaveObserverPlugin" />
     </type>
-    <type name="Magento\Customer\Observer\BeforeAddressSaveObserver">
-        <plugin name="AutoCustomerGroup_customer_observer_beforeaddresssave"
-                type="Gw\AutoCustomerGroup\Plugin\Customer\BeforeAddressSaveObserverPlugin" />
-    </type>
     <type name="Magento\Tax\Model\TaxRuleRepository">
         <plugin name="AutoCustomerGroup_taxRuleRepositoryPlugin"
                 type="Gw\AutoCustomerGroup\Plugin\Tax\TaxRuleRepositoryPlugin" />
@@ -46,4 +42,26 @@
                 type="Gw\AutoCustomerGroup\Model\OrderTaxScheme" />
     <preference for="Gw\AutoCustomerGroup\Api\Data\TaxIdCheckResponseInterface"
                 type="Gw\AutoCustomerGroup\Model\TaxIdCheckResponse" />
+
+    <type name="Magento\Customer\Ui\Component\Listing\Address\Column\Actions">
+        <plugin name="AutoCustomerGroup_add_customer_address_validate_action"
+                type="Gw\AutoCustomerGroup\Plugin\CustomerAddressActionPlugin" />
+    </type>
+
+    <type name="Magento\Quote\Model\CustomerManagement">
+        <plugin name="AutoCustomerGroup_populate_customer_info_plugin"
+                type="Gw\AutoCustomerGroup\Plugin\PopulateCustomerInfoPlugin" />
+    </type>
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="AutoCustomerGroup_assign_customer_with_address_change_plugin"
+                type="Gw\AutoCustomerGroup\Plugin\AssignCustomerWithAddressChangePlugin" />
+    </type>
+    <type name="Magento\Customer\Model\ResourceModel\AddressRepository">
+        <plugin name="CustomerAddressRepositoryPlugin"
+                type="Gw\AutoCustomerGroup\Plugin\CustomerAddressRepositoryPlugin"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address">
+        <plugin name="AutoCustomerGroup_import_customer_address_data_plugin"
+                type="Gw\AutoCustomerGroup\Plugin\ImportCustomerAddressDataPlugin"/>
+    </type>
 </config>

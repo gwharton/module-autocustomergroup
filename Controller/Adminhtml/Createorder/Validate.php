@@ -3,27 +3,21 @@
 namespace Gw\AutoCustomerGroup\Controller\Adminhtml\Createorder;
 
 use Gw\AutoCustomerGroup\Model\AutoCustomerGroup;
-use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Customer\Controller\Adminhtml\System\Config\Validatevat\ValidateAdvanced;
 use Magento\Backend\Model\Session\Quote as QuoteSession;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller to validate VAT number on Admin Create Order Page
  */
 class Validate implements HttpPostActionInterface
 {
-    /**
-     * @var Validator
-     */
-    private $validator;
-
     /**
      * @var AutoCustomerGroup
      */
@@ -33,11 +27,6 @@ class Validate implements HttpPostActionInterface
      * @var RequestInterface
      */
     private $request;
-
-    /**
-     * @var RedirectFactory
-     */
-    private $redirectFactory;
 
     /**
      * @var JsonFactory
@@ -55,30 +44,33 @@ class Validate implements HttpPostActionInterface
     private $quoteSession;
 
     /**
-     * @param Validator $validator
+     * @var LoggerInterface
+     */
+    private $logger;
+
+
+    /**
      * @param AutoCustomerGroup $autoCustomerGroup
      * @param RequestInterface $request
-     * @param RedirectFactory $redirectFactory
      * @param JsonFactory $jsonFactory
      * @param ValidateAdvanced $validateAdvanced
      * @param QuoteSession $quoteSession
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        Validator $validator,
         AutoCustomerGroup $autoCustomerGroup,
         RequestInterface $request,
-        RedirectFactory $redirectFactory,
         JsonFactory $jsonFactory,
         ValidateAdvanced $validateAdvanced,
-        QuoteSession $quoteSession
+        QuoteSession $quoteSession,
+        LoggerInterface $logger
     ) {
-        $this->validator = $validator;
         $this->autoCustomerGroup = $autoCustomerGroup;
         $this->request = $request;
-        $this->redirectFactory = $redirectFactory;
         $this->jsonFactory = $jsonFactory;
         $this->validateAdvanced = $validateAdvanced;
         $this->quoteSession = $quoteSession;
+        $this->logger = $logger;
     }
 
     /**
@@ -86,15 +78,16 @@ class Validate implements HttpPostActionInterface
      */
     public function execute()
     {
-
-        $storeId = (int)$this->request->getParam('store_id', 0);
+        $quote = $this->quoteSession->getQuote();
+        $storeId = $quote->getStoreId();
         if ($this->autoCustomerGroup->isModuleEnabled($storeId)) {
             $taxIdToCheck = $this->request->getParam('tax');
             $countryCode = $this->request->getParam('country');
             $postcode = $this->request->getParam('postcode');
-            $quote = $this->quoteSession->getQuote();
+            $type = $this->request->getParam('type');
+
             $taxIdCheckResponse = null;
-            if (!empty($countryCode) && !empty($taxIdToCheck) && $storeId) {
+            if (!empty($countryCode) && !empty($taxIdToCheck)) {
                 $taxIdCheckResponse = $this->autoCustomerGroup->checkTaxId(
                     $countryCode,
                     $taxIdToCheck,
@@ -108,7 +101,13 @@ class Validate implements HttpPostActionInterface
                 'success' => false
             ];
 
-            if ($taxIdCheckResponse && $quote) {
+            if ($taxIdCheckResponse) {
+                if ($type === "both" || $type === "shippingAddress") {
+                    $this->processAddress($quote->getShippingAddress(), $taxIdCheckResponse, $taxIdToCheck, $countryCode);
+                }
+                if ($type === "both" || $type === "billingAddress") {
+                    $this->processAddress($quote->getBillingAddress(), $taxIdCheckResponse, $taxIdToCheck, $countryCode);
+                }
 
                 $groupId = $this->autoCustomerGroup->getCustomerGroup(
                     $countryCode,
@@ -129,5 +128,30 @@ class Validate implements HttpPostActionInterface
         }
         $resultJson = $this->jsonFactory->create();
         return $resultJson->setData($responseData);
+    }
+
+    private function processAddress($address, $taxIdCheckResponse, $taxIdToCheck, $countryCode)
+    {
+        $address->setData('vat_is_valid', $taxIdCheckResponse->getIsValid());
+        if ($taxIdCheckResponse->getIsValid() === true) {
+            $address->setData('vat_request_id', $taxIdCheckResponse->getRequestIdentifier());
+            $address->setData('vat_request_date', $taxIdCheckResponse->getRequestDate());
+            $address->setData('validated_vat_number', $taxIdToCheck);
+            $address->setData('validated_country_code', $countryCode);
+        } else {
+            $address->setData('vat_request_id', null);
+            $address->setData('vat_request_date', null);
+            $address->setData('validated_vat_number', null);
+            $address->setData('validated_country_code', null);
+        }
+        $this->logger->debug(
+            "Gw/AutoCustomerGroup/Controller/Adminhtml/CreateOrder/Validate::execute() : Saving TAX ID Validation to Quote Address",
+            [
+                'addressType' => $address->getAddressType(),
+                'taxId' => $taxIdToCheck,
+                'valid' => $taxIdCheckResponse->getIsValid()
+            ]
+        );
+        $address->save();
     }
 }

@@ -301,7 +301,7 @@ class CreateOrderTest extends TestCase
 
         $orderTaxSchemes = $this->orderTaxSchemeCollectionFactory->create()->loadByOrder($order);
         /** @var OrderTaxSchemeInterface $orderTaxScheme */
-        $orderTaxScheme = $orderTaxSchemes->getItemByColumnValue('name', "UK VAT Scheme");
+        $orderTaxScheme = $orderTaxSchemes->getItemByColumnValue('name', "United Kingdom & Isle of Man VAT Scheme");
         $this->assertNotNull($orderTaxScheme);
         $this->assertEquals(
             $totalTaxSchemeUK,
@@ -309,10 +309,10 @@ class CreateOrderTest extends TestCase
         );
         $this->assertEquals($order->getEntityId(), $orderTaxScheme->getOrderId());
         $this->assertEquals("GB553557881", $orderTaxScheme->getReference());
-        $this->assertEquals("UK VAT Scheme", $orderTaxScheme->getName());
+        $this->assertEquals("United Kingdom & Isle of Man VAT Scheme", $orderTaxScheme->getName());
         $this->assertEquals("USD", $orderTaxScheme->getStoreCurrency());
         $this->assertEquals("USD", $orderTaxScheme->getBaseCurrency());
-        $this->assertEquals("GBP", $orderTaxScheme->getSchemeCurrencyCode());
+        $this->assertEquals("GBP", $orderTaxScheme->getSchemeCurrency());
         $this->assertEquals(1.0, $orderTaxScheme->getExchangeRateBaseToStore());
         $this->assertEquals(0.5, $orderTaxScheme->getExchangeRateSchemeToBase());
         $this->assertEquals(5000.0, $orderTaxScheme->getImportThresholdStore());
@@ -320,7 +320,7 @@ class CreateOrderTest extends TestCase
         $this->assertEquals(10000.0, $orderTaxScheme->getImportThresholdScheme());
 
         /** @var OrderTaxSchemeInterface $orderTaxScheme */
-        $orderTaxScheme = $orderTaxSchemes->getItemByColumnValue('name', "EU VAT OSS/IOSS Scheme");
+        $orderTaxScheme = $orderTaxSchemes->getItemByColumnValue('name', "European Union VAT OSS/IOSS Scheme");
         $this->assertNotNull($orderTaxScheme);
         $this->assertEquals(
             $totalTaxSchemeEU,
@@ -328,10 +328,10 @@ class CreateOrderTest extends TestCase
         );
         $this->assertEquals($order->getEntityId(), $orderTaxScheme->getOrderId());
         $this->assertEquals("100", $orderTaxScheme->getReference());
-        $this->assertEquals("EU VAT OSS/IOSS Scheme", $orderTaxScheme->getName());
+        $this->assertEquals("European Union VAT OSS/IOSS Scheme", $orderTaxScheme->getName());
         $this->assertEquals("USD", $orderTaxScheme->getStoreCurrency());
         $this->assertEquals("USD", $orderTaxScheme->getBaseCurrency());
-        $this->assertEquals("EUR", $orderTaxScheme->getSchemeCurrencyCode());
+        $this->assertEquals("EUR", $orderTaxScheme->getSchemeCurrency());
         $this->assertEquals(1.0, $orderTaxScheme->getExchangeRateBaseToStore());
         $this->assertEquals(0.75, $orderTaxScheme->getExchangeRateSchemeToBase());
         $this->assertEquals(15000.0, $orderTaxScheme->getImportThresholdStore());

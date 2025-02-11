@@ -9,4 +9,22 @@
     <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
         <attribute code="autocustomergroup_new_id" type="int" />
     </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="vat_is_valid" type="bool" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="vat_request_date" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="vat_request_id" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="vat_request_success" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="validated_country_code" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Customer\Api\Data\AddressInterface">
+        <attribute code="validated_vat_number" type="string" />
+    </extension_attributes>
 </config>

@@ -7,11 +7,12 @@ define([
         var params = {
             country: $(parameters.countryElementId).value,
             postcode: $(parameters.postcodeElementId).value,
-            tax: $(parameters.taxIdElementId).value
+            tax: $(parameters.taxIdElementId).value,
+            type: parameters.type
         };
 
-        if (this.storeId !== false) {
-            params.store_id = this.storeId;
+        if (this.shippingAsBilling === true) {
+            params.type = "both";
         }
 
         new Ajax.Request(parameters.validateUrl, {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction" component="Gw_AutoCustomerGroup/js/grid/massactions">
+            <action name="validate">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isAjax" xsi:type="boolean">true</item>
+                    </item>
+                </argument>
+                <settings>
+                    <url path="autocustomergroup/customer/massvalidate"/>
+                    <type>validate</type>
+                    <label translate="true">Validate TAX ID</label>
+                    <confirm>
+                        <message translate="true">Are you sure to validate the TAX Identifiers for these addresses?</message>
+                        <title translate="true">Validate TAX Ids</title>
+                    </confirm>
+                </settings>
+            </action>
+        </massaction>
+    </listingToolbar>
+    <columns name="customer_address_columns">
+        <column name="vat_id" sortOrder="95">
+            <settings>
+                <filter>text</filter>
+                <editor>
+                    <editorType>text</editorType>
+                </editor>
+                <label translate="true">TAX ID</label>
+            </settings>
+        </column>
+        <column name="vat_is_valid" component="Magento_Ui/js/grid/columns/select" sortOrder="96">
+            <settings>
+                <filter>select</filter>
+                <options class="Magento\Config\Model\Config\Source\Yesno"/>
+                <dataType>select</dataType>
+                <label translate="true">TAX Number Validated</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" component="Gw_AutoCustomerGroup/js/grid/actions">
+        </actionsColumn>
+    </columns>
+</listing>

@@ -134,52 +134,19 @@ class AutoCustomerGroup extends AbstractTotal
             $customerGroupId
         );
 
-        $validationResult = $this->ticrFactory->create();
-        //No point in validating if we haven't got a tax ID
-        if (!empty($quoteAddress->getVatId())) {
-            if (!$this->autoCustomerGroup->isValidateOnEachTransactionEnabled($storeId) &&
-                !empty($quoteAddress->getData('validated_country_code')) &&
-                !empty($quoteAddress->getData('validated_vat_number'))
-            ) {
-                //If we have previous validation data in the address, and we don't have to validate every time
-                //Then reuse the validation data
-                $this->logger->debug(
-                    "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : Reusing validation data " .
-                    "from quote address."
-                );
-                $validationResult->setIsValid((bool)$quoteAddress->getData('vat_is_valid'));
-                $validationResult->setRequestIdentifier((string)$quoteAddress->getData('vat_request_id'));
-                $validationResult->setRequestDate((string)$quoteAddress->getData('vat_request_date'));
-            } else {
-                //Validate every time
-                $result = $this->autoCustomerGroup->checkTaxId(
-                    $quoteAddress->getCountryId(),
-                    $quoteAddress->getVatId(),
-                    $storeId
-                );
-                //Must check $result as it could be null if a tax ID is entered for a non supported country
-                if ($result) {
-                    $validationResult->setIsValid($result->getIsValid());
-                    $validationResult->setRequestDate($result->getRequestDate());
-                    $validationResult->setRequestIdentifier($result->getRequestIdentifier());
-                    $validationResult->setRequestMessage($result->getRequestMessage());
-                    if ($validationResult->getIsValid()) {
-                        // Store validation results in corresponding quote address
-                        $quoteAddress->setData('vat_is_valid', $validationResult->getIsValid());
-                        $quoteAddress->setData('vat_request_id', $validationResult->getRequestIdentifier());
-                        $quoteAddress->setData('vat_request_date', $validationResult->getRequestDate());
-                        $quoteAddress->setData('validated_vat_number', $quoteAddress->getVatId());
-                        $quoteAddress->setData('validated_country_code', $quoteAddress->getCountryId());
-                        $quote->setShippingAddress($quoteAddress);
-                    }
-                }
-            }
-        }
+        $taxIdValidated = (bool)($quoteAddress->getData('vat_is_valid') ?? false);
+
+        $this->logger->debug(
+            "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : TaxID Validated",
+            [
+                'validated' => $taxIdValidated
+            ]
+        );
 
         //Get the auto assigned group for customer, returns null if group shouldn't be changed.
         $newGroup = $this->autoCustomerGroup->getCustomerGroup(
             $quoteAddress->getCountryId(),
-            $validationResult ? $validationResult->getIsValid() : false,
+            $taxIdValidated,
             $quote,
             $quoteAddress->getPostcode(),
             $storeId
