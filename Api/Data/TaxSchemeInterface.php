@@ -89,4 +89,9 @@ interface TaxSchemeInterface
      * @return float
      */
     public function getSchemeExchangeRate(?int $storeId): float;
+
+    /**
+     * @return string
+     */
+    public function __toString(): string;
 }
