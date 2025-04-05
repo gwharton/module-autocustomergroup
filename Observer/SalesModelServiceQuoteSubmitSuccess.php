@@ -125,8 +125,10 @@ class SalesModelServiceQuoteSubmitSuccess implements ObserverInterface
             $orderTaxScheme->setImportThresholdScheme((float)$taxScheme->getThresholdInSchemeCurrency($storeId));
             $orderTaxScheme->save();
             $this->logger->info(
-                "Gw/AutoCustomerGroup/Observer/SalesModelServiceQuoteSubmitSuccess::execute() : Saving Tax " .
-                "Scheme to database " . $orderTaxScheme->getName()
+                __METHOD__ . " Saving Tax Scheme to database",
+                [
+                    'Scheme Name' => $orderTaxScheme->getName()
+                ]
             );
         }
     }

@@ -113,7 +113,7 @@ class MassValidate extends Action implements HttpPostActionInterface
                     $addressModel->setData('validated_vat_number', $taxIdToCheck);
                     $addressModel->setData('validated_country_code', $countryCode);
                     $this->logger->debug(
-                        "Gw/AutoCustomerGroup/Controller/Adminhtml/Customer/Validate::execute() : Validated Tax ID. Saving to customer address"
+                        __METHOD__ . " Validated Tax ID. Saving to customer address"
                     );
                 } else {
                     $addressModel->setData('vat_request_id', null);
@@ -121,7 +121,7 @@ class MassValidate extends Action implements HttpPostActionInterface
                     $addressModel->setData('validated_vat_number', null);
                     $addressModel->setData('validated_country_code', null);
                     $this->logger->debug(
-                        "Gw/AutoCustomerGroup/Controller/Adminhtml/Customer/Validate::execute() : Failed to Validate Tax ID. Saving to customer address"
+                        __METHOD__ . " Failed to Validate Tax ID. Saving to customer address"
                     );
                 }
                 $addressModel->save();

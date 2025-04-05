@@ -81,9 +81,10 @@ class SalesModelServiceQuoteSubmitBefore implements ObserverInterface
             $quote->setCustomerGroupId($newGroup);
             $order->setCustomerGroupId($newGroup);
             $this->logger->info(
-                "Gw/AutoCustomerGroup/Observer/SalesModelServiceQuoteSubmitBefore::execute() : " .
-                "Overriding Quote and Order CustomerGroupId just before order is placed. Adjusting to " .
-                $newGroup
+                __METHOD__ . " Overriding Quote and Order CustomerGroupId just before order is placed",
+                [
+                    'groupId' => $newGroup
+                ]
             );
         }
     }

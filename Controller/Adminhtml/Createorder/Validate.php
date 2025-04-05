@@ -145,7 +145,7 @@ class Validate implements HttpPostActionInterface
             $address->setData('validated_country_code', null);
         }
         $this->logger->debug(
-            "Gw/AutoCustomerGroup/Controller/Adminhtml/CreateOrder/Validate::execute() : Saving TAX ID Validation to Quote Address",
+            __METHOD__ . " Saving TAX ID Validation to Quote Address",
             [
                 'addressType' => $address->getAddressType(),
                 'taxId' => $taxIdToCheck,

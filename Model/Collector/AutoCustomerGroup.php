@@ -103,15 +103,16 @@ class AutoCustomerGroup extends AbstractTotal
 
         if ($customer->getId()) {
             $this->logger->debug(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : Existing Customer Group " .
-                $customer->getGroupId()
+                __METHOD__ . " Existing Customer Group",
+                [
+                    'groupId' => $customer->getGroupId()
+                ]
             );
         }
 
         if ($customer->getDisableAutoGroupChange()) {
             $this->logger->debug(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : AutoGroupChange disabled " .
-                "for customer"
+                __METHOD__ . " AutoGroupChange disabled for customer"
             );
             return $this;
         }
@@ -120,7 +121,7 @@ class AutoCustomerGroup extends AbstractTotal
 
         if (empty($quoteAddress->getCountryId())) {
             $this->logger->debug(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : Quote Country Id empty "
+                __METHOD__ . " Quote Country Id empty"
             );
             return $this;
         }
@@ -130,14 +131,16 @@ class AutoCustomerGroup extends AbstractTotal
             $this->autoCustomerGroup->getDefaultGroup($storeId);
 
         $this->logger->debug(
-            "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : Starting Group is " .
-            $customerGroupId
+            __METHOD__ . " Starting Group",
+            [
+                'groupId' => $customerGroupId
+            ]
         );
 
         $taxIdValidated = (bool)($quoteAddress->getData('vat_is_valid') ?? false);
 
         $this->logger->debug(
-            "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : TaxID Validated",
+            __METHOD__ . " TaxID Validated",
             [
                 'validated' => $taxIdValidated
             ]
@@ -154,12 +157,14 @@ class AutoCustomerGroup extends AbstractTotal
 
         if ($newGroup) {
             $this->logger->debug(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : New Group Required " .
-                $newGroup
+                __METHOD__ . " New Group Required",
+                [
+                    'groupId' => $newGroup
+                ]
             );
         } else {
             $this->logger->debug(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : No Group Change Required "
+                __METHOD__ . " No Group Change Required"
             );
         }
 
@@ -194,8 +199,10 @@ class AutoCustomerGroup extends AbstractTotal
                 $quote->setCustomer($customer);
             }
             $this->logger->info(
-                "Gw/AutoCustomerGroup/Model/Collector/AutoCustomerGroup::updateGroup() : Setting quote Group to " .
-                $newGroup
+                __METHOD__ . " Setting new quote Group",
+                [
+                    'groupId' => $newGroup
+                ]
             );
             $quote->setCustomerGroupId($newGroup);
         }
