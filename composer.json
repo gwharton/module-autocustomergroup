@@ -4,7 +4,6 @@
     "type": "magento2-module",
     "require": {
         "magento/framework": "*",
-        "magento/module-catalog": "*",
         "magento/module-checkout": "*",
         "magento/module-customer": "*",
         "magento/module-directory": "*",
@@ -17,6 +16,9 @@
         "magento/module-eav": "*",
         "magento/module-ui": "*",
         "psr/log": "*"
+    },
+    "require-dev": {
+        "magento/module-catalog": "*"
     },
     "config": {
         "sort-packages": true
