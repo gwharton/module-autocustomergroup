@@ -32,7 +32,7 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="order_tax_scheme_id"/>
         </constraint>
-        <constraint xsi:type="foreign" referenceId="SALES_ORDER_TAX_SCHEME_ORDER_ID_SALES_ORDER_ORDER_ID"
+        <constraint xsi:type="foreign" referenceId="SALES_ORDER_TAX_SCHEME_ORDER_ID_SALES_ORDER_ENTITY_ID"
                     table="sales_order_tax_scheme" column="order_id" referenceTable="sales_order"
                     referenceColumn="entity_id" onDelete="CASCADE"/>
     </table>
