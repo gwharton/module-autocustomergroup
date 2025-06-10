@@ -33,12 +33,12 @@ class Group implements OptionSourceInterface
     /**
      * @param GroupManagementInterface $groupManagement
      * @param DataObject $converter
-     * @param GroupSourceLoggedInOnlyInterface $groupSourceForLoggedInCustomers
+     * @param GroupSourceLoggedInOnlyInterface|null $groupSourceForLoggedInCustomers
      */
     public function __construct(
         GroupManagementInterface $groupManagement,
         DataObject $converter,
-        GroupSourceLoggedInOnlyInterface $groupSourceForLoggedInCustomers = null
+        ?GroupSourceLoggedInOnlyInterface $groupSourceForLoggedInCustomers = null
     ) {
         $this->_groupManagement = $groupManagement;
         $this->_converter = $converter;

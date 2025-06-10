@@ -43,7 +43,7 @@ class TotalBaseCalculator extends CalculationTotalBaseCalculator
         Config $config,
         int $storeId,
         TaxRuleExtractor $taxRuleExtractor,
-        DataObject $addressRateRequest = null
+        ?DataObject $addressRateRequest = null
     ) {
         parent::__construct(
             $taxClassService,
